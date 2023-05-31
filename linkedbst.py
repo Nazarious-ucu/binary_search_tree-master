@@ -7,7 +7,9 @@ from abstractcollection import AbstractCollection
 from bstnode import BSTNode
 from linkedstack import LinkedStack
 from math import log
-
+from copy import deepcopy
+import time
+import random
 
 class LinkedBST(AbstractCollection):
     """An link-based binary search tree implementation."""
@@ -350,4 +352,51 @@ class LinkedBST(AbstractCollection):
         :return:
         :rtype:
         """
+        word_list = []
 
+        with open(path, 'r') as file:
+            for line in file:
+                word_list.append(line.strip())
+        word_list.sort()
+        word_list = word_list[:989]
+
+        rand_word_lst = []
+        for _ in range(10000):
+            rand_word_lst.append(random.choice(word_list))
+
+
+        start = time.perf_counter()
+
+        for word in rand_word_lst:
+            word_list.index(word)
+        end = time.perf_counter()
+        print('Time for list: ', end - start)
+
+        bst = LinkedBST(word_list)
+        start = time.perf_counter()
+        for word in rand_word_lst:
+            bst.find(word)
+        end = time.perf_counter()
+        print('Time for bst: ', end - start)
+
+
+        words_rand = deepcopy(word_list)
+        random.shuffle(words_rand)
+        bst1 = LinkedBST(words_rand)
+        start = time.perf_counter()
+        for word in rand_word_lst:
+            bst1.find(word)
+        end = time.perf_counter()
+        print('Time for bst shuffled: ', end - start)
+
+        bst.rebalance()
+        start = time.perf_counter()
+        for word in rand_word_lst:
+            bst.find(word)
+        end = time.perf_counter()
+        print('Time for rebalanced bst: ', end - start)
+
+
+if __name__ == '__main__':
+    bst = LinkedBST()
+    bst.demo_bst('words.txt')
